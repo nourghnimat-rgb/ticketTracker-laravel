@@ -7,6 +7,7 @@
 </head>
 
 <body>
+    <a href="{{ route('tickets.mine') }}">My Tickets</a>
     <h1>Projects</h1>
 
     @can('create', App\Models\Project::class)

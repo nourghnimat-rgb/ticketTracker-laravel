@@ -75,7 +75,7 @@ class TicketService
 
     public function notifyOverdue(): int
     {
-        $overdue = Ticket::with('project')
+        $overdue = Ticket::with('project.users')
             ->whereDate('due_date', '<', today())
             ->whereNotIn('status', [TicketStatus::Resolved->value, TicketStatus::Closed->value])
             ->get();
@@ -84,9 +84,9 @@ class TicketService
             ->pluck('id');
 
         foreach ($overdue as $ticket) {
-            $managerIds = $ticket->project->users()
-                ->where('role', UserRole::Manager->value)
-                ->pluck('users.id');
+            $managerIds = $ticket->project->users
+                ->filter(fn($member) => $member->role === UserRole::Manager)
+                ->pluck('id');
 
             $recipientIds = $managerIds
                 ->merge($adminIds)

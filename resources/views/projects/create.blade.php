@@ -1,26 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Create Project</h1>
+<x-layout title="Create project">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Create project</h1>
+        <a href="{{ route('projects.index') }}" class="btn btn-outline-secondary btn-sm">Back to projects</a>
+    </div>
 
-<form method="POST" action="{{ route('projects.store') }}">
-    @csrf
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ route('projects.store') }}">
+                @csrf
 
-    <label for="name">Project name</label>
-    <input id="name" name="name" value="{{ old('name') }}" required>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input id="name" name="name" value="{{ old('name') }}"
+                           class="form-control @error('name') is-invalid @enderror" required>
+                    @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
 
-    @error('name')
-        <p>{{ $message }}</p>
-    @enderror
-
-    <button type="submit">Create</button>
-</form>
-
-<a href="{{ route('projects.index') }}">Back to projects</a>
-</body>
-</html>
+                <button type="submit" class="btn btn-primary">Create project</button>
+            </form>
+        </div>
+    </div>
+</x-layout>

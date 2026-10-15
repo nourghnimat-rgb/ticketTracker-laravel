@@ -1,33 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+<x-layout title="Login">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header"><strong>Login</strong></div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url('/login') }}">
+                        @csrf
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input id="email" type="email" name="email" value="{{ old('email') }}"
+                                   class="form-control" required autofocus>
+                        </div>
 
-<body>
-    <div>
-        <form method="POST" action="/login">
-            @csrf
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input id="password" type="password" name="password" class="form-control" required>
+                        </div>
 
-            <label for="email">Email</label>
-            <input id="email" type="email" name="email" required>
-
-            <label for="password">Password</label>
-            <input id="password" type="password" name="password" required>
-            @error('email')
-            <p>{{ $message }}</p>
-            @enderror
-
-            <button type="submit">Login</button>
-        </form>
-
-
-
-
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-</body>
-
+</x-layout>
 </html>

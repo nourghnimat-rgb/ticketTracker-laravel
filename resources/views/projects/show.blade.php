@@ -1,109 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
+<x-layout :title="$project->name">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">{{ $project->name }}</h1>
+        <a href="{{ route('projects.index') }}" class="btn btn-outline-secondary btn-sm">Back to projects</a>
+    </div>
 
-<head>
-    <meta charset="UTF-8">
-    <title>{{ $project->name }}</title>
-</head>
+    {{-- Tickets --}}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <strong>Tickets</strong>
+            @can('create', [\App\Models\Ticket::class, $project])
+            <a href="{{ route('tickets.create', $project) }}" class="btn btn-primary btn-sm">New ticket</a>
+            @endcan
+        </div>
 
-<body>
-    <h1>{{ $project->name }}</h1>
-    @if (session('success'))
-    <p>{{ session('success') }}</p>
-    @endif
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Priority</th>
+                        <th>Assignee</th>
+                        <th>Due</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($project->tickets as $ticket)
+                    <tr>
+                        <td>
+                            <a href="{{ route('tickets.show', $ticket) }}" class="text-decoration-none">
+                                {{ $ticket->title }}
+                            </a>
+                        </td>
+                        <td>{{ $ticket->category->label() }}</td>
+                        <td><x-status-badge :status="$ticket->status" /></td>
+                        <td>{{ $ticket->priority->label() }}</td>
+                        <td>{{ $ticket->assignee?->name ?? 'Unassigned' }}</td>
+                        <td>{{ $ticket->due_date->format('Y-m-d') }}</td>
+                        <td>
+                            @can('update', $ticket)
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('tickets.edit', $ticket) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
 
-    @if ($errors->any())
-    <ul>
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-    @endif
+                                @can('delete', $ticket)
+                                <form method="POST" action="{{ route('tickets.destroy', $ticket) }}"
+                                    onsubmit="return confirm('Delete this ticket?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                                @endcan
+                            </div>
+                            @elsecan('updateStatus', $ticket)
+                            <form method="POST" action="{{ route('tickets.status.update', $ticket) }}"
+                                class="d-flex gap-2">
+                                @csrf
+                                @method('PATCH')
+                                <select name="status" class="form-select form-select-sm">
+                                    @foreach (\App\Enums\TicketStatus::cases() as $status)
+                                    <option value="{{ $status->value }}" @selected($ticket->status === $status)>
+                                        {{ $status->label() }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                            </form>
+                            @endcan
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="text-muted">No tickets yet.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    @can('update', $project)
-    <h2>Project members</h2>
+    {{-- Members --}}
+    <div class="card">
+        <div class="card-header"><strong>Members</strong></div>
+        <div class="card-body">
+            <ul class="mb-0">
+                @forelse ($project->users as $member)
+                <li>{{ $member->name }} ({{ ucfirst($member->role) }})</li>
+                @empty
+                <li class="text-muted">No members yet.</li>
+                @endforelse
+            </ul>
 
-    <form method="POST"
-        action="{{ route('projects.members.update', $project) }}">
-        @csrf
-        @method('PUT')
+            @can('update', $project)
+            <hr>
+            <h2 class="h6">Manage members</h2>
 
-        @foreach ($users as $user)
-        <label>
-            <input type="checkbox"
-                name="members[]"
-                value="{{ $user->id }}"
-                @checked(in_array(
-                $user->id,
-            old('members', $errors->any() ? [] : $project->users->modelKeys())
-            ))>
+            <form method="POST" action="{{ route('projects.members.update', $project) }}">
+                @csrf
+                @method('PUT')
 
-            {{ $user->name }} ({{ $user->role }})
-        </label>
-        <br>
-        @endforeach
+                @foreach ($candidates as $user)
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="members[]"
+                        id="member-{{ $user->id }}" value="{{ $user->id }}"
+                        @checked($project->users->contains($user))>
+                    <label class="form-check-label" for="member-{{ $user->id }}">
+                        {{ $user->name }} ({{ ucfirst($user->role) }})
+                    </label>
+                </div>
+                @endforeach
 
-        <button type="submit">Save members</button>
-    </form>
-    @endcan
-    <h2>Tickets</h2>
-
-    @can('create', [\App\Models\Ticket::class, $project])
-    <a href="{{ route('tickets.create', $project) }}">New ticket</a>
-    @endcan
-
-    <table border="1" cellpadding="6">
-        <tr>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Priority</th>
-            <th>Assignee</th>
-            <th>Due</th>
-            <th>Actions</th>
-        </tr>
-        @forelse ($project->tickets as $ticket)
-        <tr>
-            <td><a href="{{ route('tickets.show', $ticket) }}">{{ $ticket->title }}</a></td>
-            <td>{{ $ticket->status->label() }}</td>
-            <td>{{ $ticket->priority->label() }}</td>
-            <td>{{ $ticket->assignee?->name ?? 'Unassigned' }}</td>
-            <td>{{ $ticket->due_date->format('Y-m-d') }}</td>
-            <<td>
-                @can('update', $ticket)
-                <a href="{{ route('tickets.edit', $ticket) }}">Edit</a>
-
-                @can('delete', $ticket)
-                <form method="POST" action="{{ route('tickets.destroy', $ticket) }}" style="display:inline"
-                    onsubmit="return confirm('Delete this ticket?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit">Delete</button>
-                </form>
-                @endcan
-                @elsecan('updateStatus', $ticket)
-                <form method="POST" action="{{ route('tickets.status.update', $ticket) }}">
-                    @csrf
-                    @method('PATCH')
-                    <select name="status">
-                        @foreach (\App\Enums\TicketStatus::cases() as $status)
-                        <option value="{{ $status->value }}" @selected($ticket->status === $status)>
-                            {{ $status->label() }}
-                        </option>
-                        @endforeach
-                    </select>
-                    <button type="submit">Update</button>
-                </form>
-                @endcan
-                </td>
-        </tr>
-        @empty
-        <tr>
-            <td colspan="6">No tickets yet.</td>
-        </tr>
-        @endforelse
-    </table>
-
-    <a href="{{ route('projects.index') }}">Back to projects</a>
-</body>
-
-</html>
+                <button type="submit" class="btn btn-primary btn-sm mt-3">Save members</button>
+            </form>
+            @endcan
+        </div>
+    </div>
+</x-layout>

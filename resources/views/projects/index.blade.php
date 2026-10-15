@@ -1,48 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
+<x-layout title="Projects">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Projects</h1>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Projects</title>
-</head>
+        @can('create', \App\Models\Project::class)
+            <a href="{{ route('projects.create') }}" class="btn btn-primary">Create Project</a>
+        @endcan
+    </div>
 
-<body>
-    <a href="{{ route('tickets.mine') }}">My Tickets</a>
-    <h1>Projects</h1>
-
-    @can('create', App\Models\Project::class)
-    <a href="{{ route('projects.create') }}">Create Project</a>
-    @endcan
-
-    @if (session('success'))
-    <p>{{ session('success') }}</p>
-    @endif
-
-    <<ul>
+    <div class="list-group">
         @forelse ($projects as $project)
-        <li>
-            <a href="{{ route('projects.show', $project) }}">
-                {{ $project->name }}
-            </a>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ route('projects.show', $project) }}" class="fw-semibold text-decoration-none">
+                    {{ $project->name }}
+                </a>
 
-            @can('update', $project)
-            <a href="{{ route('projects.edit', $project) }}">Edit</a>
-            @endcan
+                <div class="d-flex gap-2">
+                    @can('update', $project)
+                        <a href="{{ route('projects.edit', $project) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    @endcan
 
-            @can('delete', $project)
-            <form method="POST"
-                action="{{ route('projects.destroy', $project) }}">
-                @csrf
-                @method('DELETE')
-
-                <button type="submit">Delete</button>
-            </form>
-            @endcan
-        </li>
+                    @can('delete', $project)
+                        <form method="POST" action="{{ route('projects.destroy', $project) }}"
+                              onsubmit="return confirm('Delete this project?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    @endcan
+                </div>
+            </div>
         @empty
-        <li>No projects yet.</li>
+            <div class="list-group-item text-muted">No projects yet.</div>
         @endforelse
-        </ul>
-</body>
-
-</html>
+    </div>
+</x-layout>

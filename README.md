@@ -6,7 +6,7 @@ and Users work on the tickets assigned to them.
 
 ## Requirements
 
-- PHP 8.3+
+- PHP 8.4+
 - Composer
 - MySQL
 

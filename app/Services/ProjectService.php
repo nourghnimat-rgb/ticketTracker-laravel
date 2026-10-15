@@ -57,7 +57,8 @@ class ProjectService
 
     public function memberCandidates(): Collection
     {
-        return User::whereIn('role', ['manager', 'user'])->orderBy('name')->get();
+        return User::whereIn('role', [UserRole::Manager->value, UserRole::User->value])
+            ->orderBy('name')->get();
     }
 
     public function loadDetails(Project $project): Project

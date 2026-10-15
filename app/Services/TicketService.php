@@ -33,7 +33,8 @@ class TicketService
 
     public function assignableUsers(Project $project): Collection
     {
-        return $project->users()->where('role', 'user')->orderBy('name')->get();
+        return $project->users()->where('role', UserRole::User->value)
+            ->orderBy('name')->get();
     }
 
     public function update(Ticket $ticket, array $data): Ticket
@@ -79,10 +80,13 @@ class TicketService
             ->whereNotIn('status', [TicketStatus::Resolved->value, TicketStatus::Closed->value])
             ->get();
 
-        $adminIds = User::where('role', 'admin')->pluck('id');
+        $adminIds = User::where('role', UserRole::Admin->value)
+            ->pluck('id');
 
         foreach ($overdue as $ticket) {
-            $managerIds = $ticket->project->users()->where('role', 'manager')->pluck('users.id');
+            $managerIds = $ticket->project->users()
+                ->where('role', UserRole::Manager->value)
+                ->pluck('users.id');
 
             $recipientIds = $managerIds
                 ->merge($adminIds)

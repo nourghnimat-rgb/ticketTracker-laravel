@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\TicketCategory;
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
+use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -33,7 +34,7 @@ class UpdateTicketRequest extends FormRequest
             'status' => ['required', Rule::enum(TicketStatus::class)],
             'assignee_id' => [
                 'nullable',
-                Rule::exists('users', 'id')->where('role', 'user'),
+                Rule::exists('users', 'id')->where('role', UserRole::User->value),
                 Rule::exists('project_user', 'user_id')->where('project_id', $ticket->project_id),
             ],
         ];

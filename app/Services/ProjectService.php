@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Project;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProjectService
 {
@@ -38,5 +39,9 @@ public function delete(Project $project): void
 public function updateMembers(Project $project, array $members): void
 {
     $project->users()->sync($members);
+}
+public function memberCandidates(): Collection
+{
+    return User::whereIn('role', ['manager', 'user'])->orderBy('name')->get();
 }
 }

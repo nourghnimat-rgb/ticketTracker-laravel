@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\TicketStatus;
+use App\Jobs\SendTicketNotification;
 use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\User;
@@ -11,13 +12,23 @@ use App\Models\User;
 
 class TicketService
 {
-    public function create(array $data, User $creator, Project $project): Ticket
+public function create(array $data, User $creator, Project $project): Ticket
 {
-    return Ticket::create([
+    $ticket = Ticket::create([
         ...$data,
         'project_id' => $project->id,
         'created_by' => $creator->id,
     ]);
+
+    if ($ticket->assignee_id) {
+        SendTicketNotification::dispatch(
+            $ticket,
+            [$ticket->assignee_id],
+            "You were assigned to ticket: {$ticket->title}"
+        );
+    }
+
+    return $ticket;
 }
 public function assignableUsers (Project $project):Collection
 {
@@ -27,6 +38,14 @@ public function assignableUsers (Project $project):Collection
 public function update(Ticket $ticket, array $data): Ticket
 {
     $ticket->update($data);
+
+    if ($ticket->wasChanged('assignee_id') && $ticket->assignee_id) {
+        SendTicketNotification::dispatch(
+            $ticket,
+            [$ticket->assignee_id],
+            "You were assigned to ticket: {$ticket->title}"
+        );
+    }
 
     return $ticket;
 }
@@ -48,5 +67,34 @@ public function myTickets(User $user): Collection
         : Ticket::where('created_by', $user->id);
 
     return $query->with(['project', 'assignee'])->latest()->get();
+}
+public function notifyOverdue(): int
+{
+    $overdue = Ticket::with('project')
+        ->whereDate('due_date', '<', today())
+        ->whereNotIn('status', [TicketStatus::Resolved->value, TicketStatus::Closed->value])
+        ->get();
+
+    $adminIds = User::where('role', 'admin')->pluck('id');
+
+    foreach ($overdue as $ticket) {
+        $managerIds = $ticket->project->users()->where('role', 'manager')->pluck('users.id');
+
+        $recipientIds = $managerIds
+            ->merge($adminIds)
+            ->push($ticket->assignee_id)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        SendTicketNotification::dispatch(
+            $ticket,
+            $recipientIds,
+            "Ticket is overdue: {$ticket->title}"
+        );
+    }
+
+    return $overdue->count();
 }
 }

@@ -26,9 +26,7 @@ class TicketPolicy
             return true;
         }
 
-        return $ticket->project->users()
-            ->whereKey($user->id)
-            ->exists();
+        return $this->isMember($user, $ticket->project);
     }
 
     /**
@@ -41,7 +39,7 @@ class TicketPolicy
         }
 
         return $user->role === UserRole::Manager
-            && $project->users()->whereKey($user->id)->exists();
+            && $this->isMember($user, $project);
     }
 
     /**
@@ -54,7 +52,7 @@ class TicketPolicy
         }
 
         return $user->role === UserRole::Manager
-            && $ticket->project->users()->whereKey($user->id)->exists();
+            && $this->isMember($user, $ticket->project);
     }
 
     /**
@@ -89,6 +87,10 @@ class TicketPolicy
 
         return $user->role === UserRole::User
             && $ticket->assignee_id === $user->id
-            && $ticket->project->users()->whereKey($user->id)->exists();
+            && $this->isMember($user, $ticket->project);
+    }
+    private function isMember(User $user, Project $project): bool
+    {
+        return $project->users()->whereKey($user->id)->exists();
     }
 }

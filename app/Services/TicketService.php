@@ -97,4 +97,8 @@ public function notifyOverdue(): int
 
     return $overdue->count();
 }
+public function loadDetails(Ticket $ticket): Ticket
+{
+    return $ticket->load(['project', 'creator', 'assignee', 'comments.user']);
+}
 }

@@ -61,10 +61,10 @@ public function mine(Request $request, TicketService $ticketService)
         'tickets' => $ticketService->myTickets($request->user()),
     ]);
 }
-public function show(Ticket $ticket)
+public function show(Ticket $ticket, TicketService $ticketService)
 {
     return view('tickets.show', [
-        'ticket' => $ticket->load(['project', 'creator', 'assignee', 'comments.user']),
+        'ticket' => $ticketService->loadDetails($ticket),
     ]);
 }
 }

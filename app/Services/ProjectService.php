@@ -53,4 +53,8 @@ public function memberCandidates(): Collection
 {
     return User::whereIn('role', ['manager', 'user'])->orderBy('name')->get();
 }
+public function loadDetails(Project $project): Project
+{
+    return $project->load(['users', 'tickets.assignee']);
+}
 }

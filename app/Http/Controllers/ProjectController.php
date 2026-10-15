@@ -59,7 +59,7 @@ class ProjectController extends Controller
     public function show(Project $project, ProjectService $projectService)
 {
     return view('projects.show', [
-        'project' => $project->load(['users', 'tickets.assignee']),
+        'project' => $projectService->loadDetails($project),
         'candidates' => $projectService->memberCandidates(),
     ]);
 }

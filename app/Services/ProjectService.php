@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\UserRole;
 use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\User;
@@ -21,7 +22,7 @@ class ProjectService
 
     public function listFor(User $user)
     {
-        if ($user->role === 'admin') {
+        if ($user->role === UserRole::Admin) {
             return Project::all();
         }
 

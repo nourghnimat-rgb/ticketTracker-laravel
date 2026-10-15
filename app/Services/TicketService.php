@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\TicketStatus;
+use App\Enums\UserRole;
 use App\Jobs\SendTicketNotification;
 use App\Models\Project;
 use App\Models\Ticket;
@@ -33,7 +34,6 @@ class TicketService
     public function assignableUsers(Project $project): Collection
     {
         return $project->users()->where('role', 'user')->orderBy('name')->get();
-
     }
 
     public function update(Ticket $ticket, array $data): Ticket
@@ -65,7 +65,7 @@ class TicketService
 
     public function myTickets(User $user): Collection
     {
-        $query = $user->role === 'user'
+        $query = $user->role === UserRole::User
             ? Ticket::where('assignee_id', $user->id)
             : Ticket::where('created_by', $user->id);
 

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\Project;
 use App\Models\User;
 
@@ -20,8 +21,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return $user->role === 'admin'
-        || $project->users()->whereKey($user->id)->exists();
+        return $user->role === UserRole::Admin|| $project->users()->whereKey($user->id)->exists();
     }
 
     /**
@@ -29,7 +29,7 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'admin';
+        return $user->role === UserRole::Admin;
     }
 
     /**
@@ -37,7 +37,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return $user->role === 'admin';
+        return $user->role === UserRole::Admin;
     }
 
     /**
@@ -45,7 +45,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        return $user->role === 'admin';
+        return $user->role === UserRole::Admin;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\Comment;
 use App\Models\Ticket;
 use App\Models\User;
@@ -45,12 +46,14 @@ class CommentPolicy
      */
     public function delete(User $user, Comment $comment): bool
     {
-        if ($user->role === 'admin') {
+        if (
+            $user->role === UserRole::Admin
+        ) {
             return true;
         }
 
         return $comment->user_id === $user->id
-            || ($user->role === 'manager' && $comment->ticket->created_by === $user->id);
+            || ($user->role === UserRole::Manager && $comment->ticket->created_by === $user->id);
     }
 
     /**

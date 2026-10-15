@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\User;
@@ -21,7 +22,7 @@ class TicketPolicy
      */
     public function view(User $user, Ticket $ticket): bool
     {
-        if ($user->role === 'admin') {
+        if ($user->role === UserRole::Admin) {
             return true;
         }
 
@@ -35,11 +36,11 @@ class TicketPolicy
      */
     public function create(User $user, Project $project): bool
     {
-        if ($user->role === 'admin') {
+        if ($user->role === UserRole::Admin) {
             return true;
         }
 
-        return $user->role === 'manager'
+        return $user->role === UserRole::Manager
             && $project->users()->whereKey($user->id)->exists();
     }
 
@@ -48,11 +49,11 @@ class TicketPolicy
      */
     public function update(User $user, Ticket $ticket): bool
     {
-        if ($user->role === 'admin') {
+        if ($user->role === UserRole::Admin) {
             return true;
         }
 
-        return $user->role === 'manager'
+        return $user->role === UserRole::Manager
             && $ticket->project->users()->whereKey($user->id)->exists();
     }
 
@@ -86,7 +87,7 @@ class TicketPolicy
             return true;
         }
 
-        return $user->role === 'user'
+        return $user->role === UserRole::User
             && $ticket->assignee_id === $user->id
             && $ticket->project->users()->whereKey($user->id)->exists();
     }

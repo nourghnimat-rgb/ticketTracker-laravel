@@ -15,7 +15,9 @@ class NotificationJobsTest extends TestCase
     use RefreshDatabase;
 
     private User $manager;
+
     private User $user;
+
     private Project $project;
 
     protected function setUp(): void
@@ -81,8 +83,7 @@ class NotificationJobsTest extends TestCase
             ->assertSuccessful();
 
         Queue::assertPushed(SendTicketNotification::class, 1);
-        Queue::assertPushed(SendTicketNotification::class, fn ($job) =>
-            $job->ticket->is($overdue)
+        Queue::assertPushed(SendTicketNotification::class, fn ($job) => $job->ticket->is($overdue)
             && in_array($this->user->id, $job->recipientIds)
             && in_array($this->manager->id, $job->recipientIds)
             && in_array($admin->id, $job->recipientIds));

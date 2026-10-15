@@ -11,50 +11,56 @@ class ProjectService
 {
     public function create(array $data, User $creator)
     {
-        $project = new Project();
+        $project = new Project;
         $project->name = $data['name'];
         $project->created_by = $creator->id;
         $project->save();
 
         return $project;
     }
+
     public function listFor(User $user)
-{
-    if ($user->role === 'admin') {
-        return Project::all();
+    {
+        if ($user->role === 'admin') {
+            return Project::all();
+        }
+
+        return $user->projects;
     }
 
-    return $user->projects;
-}
-public function update(Project $project, array $data): Project
-{
-    $project->name = $data['name'];
-    $project->save();
+    public function update(Project $project, array $data): Project
+    {
+        $project->name = $data['name'];
+        $project->save();
 
-    return $project;
-}
-public function delete(Project $project): void
-{
-    $project->delete();
-}
-public function updateMembers(Project $project, array $members): void
-{
-    $removedIds = $project->users()
-        ->whereNotIn('users.id', $members)
-        ->pluck('users.id');
+        return $project;
+    }
 
-    $project->users()->sync($members);
+    public function delete(Project $project): void
+    {
+        $project->delete();
+    }
 
-    Ticket::where('project_id', $project->id)
-        ->whereIn('assignee_id', $removedIds)
-        ->update(['assignee_id' => null]);
-}
-public function memberCandidates(): Collection
-{
-    return User::whereIn('role', ['manager', 'user'])->orderBy('name')->get();
-}
-public function loadDetails(Project $project): Project
-{
-    return $project->load(['users', 'tickets.assignee']);
-}
+    public function updateMembers(Project $project, array $members): void
+    {
+        $removedIds = $project->users()
+            ->whereNotIn('users.id', $members)
+            ->pluck('users.id');
+
+        $project->users()->sync($members);
+
+        Ticket::where('project_id', $project->id)
+            ->whereIn('assignee_id', $removedIds)
+            ->update(['assignee_id' => null]);
+    }
+
+    public function memberCandidates(): Collection
+    {
+        return User::whereIn('role', ['manager', 'user'])->orderBy('name')->get();
+    }
+
+    public function loadDetails(Project $project): Project
+    {
+        return $project->load(['users', 'tickets.assignee']);
+    }
 }

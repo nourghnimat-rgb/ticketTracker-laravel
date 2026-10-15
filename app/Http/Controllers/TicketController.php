@@ -20,10 +20,12 @@ class TicketController extends Controller
         return redirect()->route('projects.show', $project)
             ->with('success', 'Ticket created successfully.');
     }
+
     public function create(Project $project, TicketService $ticketService)
     {
         return view('tickets.create', ['project' => $project, 'assignees' => $ticketService->assignableUsers($project)]);
     }
+
     public function edit(Ticket $ticket, TicketService $ticketService)
     {
         return view('tickets.edit', [
@@ -49,22 +51,25 @@ class TicketController extends Controller
         return redirect()->route('projects.show', $project)
             ->with('success', 'Ticket deleted successfully.');
     }
-    public function updateStatus(UpdateTicketStatusRequest $request, Ticket $ticket, TicketService $ticketService)
-{
-    $ticketService->updateStatus($ticket, $request->enum('status', TicketStatus::class));
 
-    return back()->with('success', 'Status updated.');
-}
-public function mine(Request $request, TicketService $ticketService)
-{
-    return view('tickets.mine', [
-        'tickets' => $ticketService->myTickets($request->user()),
-    ]);
-}
-public function show(Ticket $ticket, TicketService $ticketService)
-{
-    return view('tickets.show', [
-        'ticket' => $ticketService->loadDetails($ticket),
-    ]);
-}
+    public function updateStatus(UpdateTicketStatusRequest $request, Ticket $ticket, TicketService $ticketService)
+    {
+        $ticketService->updateStatus($ticket, $request->enum('status', TicketStatus::class));
+
+        return back()->with('success', 'Status updated.');
+    }
+
+    public function mine(Request $request, TicketService $ticketService)
+    {
+        return view('tickets.mine', [
+            'tickets' => $ticketService->myTickets($request->user()),
+        ]);
+    }
+
+    public function show(Ticket $ticket, TicketService $ticketService)
+    {
+        return view('tickets.show', [
+            'ticket' => $ticketService->loadDetails($ticket),
+        ]);
+    }
 }

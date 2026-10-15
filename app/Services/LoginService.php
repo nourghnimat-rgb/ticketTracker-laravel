@@ -10,8 +10,9 @@ class LoginService
     {
         return Auth::attempt($credentials);
     }
+
     public function logout(): void
-{
-    Auth::logout();
-}
+    {
+        Auth::logout();
+    }
 }

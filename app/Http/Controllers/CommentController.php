@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
-use App\Services\CommentService;
-use Illuminate\Http\Request;
 use App\Models\Comment;
 use App\Models\Ticket;
-use App\Models\User;
+use App\Services\CommentService;
 
 class CommentController extends Controller
 {

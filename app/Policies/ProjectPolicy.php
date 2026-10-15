@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Project;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ProjectPolicy
 {
@@ -30,7 +29,7 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
-         return $user->role === 'admin';
+        return $user->role === 'admin';
     }
 
     /**
@@ -46,7 +45,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-         return $user->role === 'admin';
+        return $user->role === 'admin';
     }
 
     /**

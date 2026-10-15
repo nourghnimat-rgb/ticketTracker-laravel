@@ -16,9 +16,13 @@ class CommentPermissionsTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $manager;
+
     private User $user;
+
     private Project $project;
+
     private Ticket $ticket;
 
     protected function setUp(): void

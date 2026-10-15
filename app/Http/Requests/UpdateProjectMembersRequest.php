@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Validation\Rule;
-
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateProjectMembersRequest extends FormRequest
 {
@@ -29,7 +28,7 @@ class UpdateProjectMembersRequest extends FormRequest
             'members.*' => [
                 'integer',
                 'distinct',
-                Rule::exists('users', 'id')->whereIn('role', ['manager', 'user'])
+                Rule::exists('users', 'id')->whereIn('role', ['manager', 'user']),
             ],
         ];
     }

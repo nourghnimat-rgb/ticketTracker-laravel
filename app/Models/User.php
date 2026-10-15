@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password','role'])]
+#[Fillable(['name', 'email', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -29,22 +29,24 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
-  public function createdTickets()
-{
-    return $this->hasMany(Ticket::class, 'created_by');
-}
 
-public function assignedTickets()
-{
-    return $this->hasMany(Ticket::class, 'assignee_id');
-}
-   public function projects()
-{
-    return $this->belongsToMany(Project::class);
-}
-  public function comments()
-{
-    return $this->hasMany(Comment::class);
-}
+    public function createdTickets()
+    {
+        return $this->hasMany(Ticket::class, 'created_by');
+    }
+
+    public function assignedTickets()
+    {
+        return $this->hasMany(Ticket::class, 'assignee_id');
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

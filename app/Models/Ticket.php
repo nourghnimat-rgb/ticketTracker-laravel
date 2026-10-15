@@ -30,15 +30,16 @@ class Ticket extends Model
     {
         return $this->belongsTo(User::class, 'assignee_id');
     }
+
     public function project()
     {
         return $this->belongsTo(Project::class);
     }
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
     }
-
 
     protected function casts(): array
     {
@@ -49,5 +50,4 @@ class Ticket extends Model
             'priority' => TicketPriority::class,
         ];
     }
-    
 }

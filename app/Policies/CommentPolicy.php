@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\Comment;
 use App\Models\Ticket;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CommentPolicy
 {

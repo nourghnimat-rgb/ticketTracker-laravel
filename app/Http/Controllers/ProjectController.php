@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateProjectMembersRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Services\ProjectService;
-
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -19,19 +18,21 @@ class ProjectController extends Controller
         return redirect()->route('projects.index')
             ->with('success', 'Project created successfully.');
     }
+
     public function index(Request $request, ProjectService $projectService)
     {
-        
 
         $projects = $projectService->listFor($request->user());
 
         return view('projects.index', compact('projects'));
     }
+
     public function create()
     {
 
         return view('projects.create');
     }
+
     public function update(
         UpdateProjectRequest $request,
         Project $project,
@@ -42,11 +43,13 @@ class ProjectController extends Controller
         return redirect()->route('projects.index')
             ->with('success', 'Project updated successfully.');
     }
+
     public function edit(Project $project)
     {
 
         return view('projects.edit', compact('project'));
     }
+
     public function destroy(Project $project, ProjectService $projectService)
     {
 
@@ -57,12 +60,13 @@ class ProjectController extends Controller
     }
 
     public function show(Project $project, ProjectService $projectService)
-{
-    return view('projects.show', [
-        'project' => $projectService->loadDetails($project),
-        'candidates' => $projectService->memberCandidates(),
-    ]);
-}
+    {
+        return view('projects.show', [
+            'project' => $projectService->loadDetails($project),
+            'candidates' => $projectService->memberCandidates(),
+        ]);
+    }
+
     public function updateMembers(
         UpdateProjectMembersRequest $request,
         Project $project,

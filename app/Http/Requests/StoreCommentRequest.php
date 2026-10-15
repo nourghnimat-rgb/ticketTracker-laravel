@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Models\Comment;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCommentRequest extends FormRequest

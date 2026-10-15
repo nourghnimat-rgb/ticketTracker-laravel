@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Ticket;
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 use App\Enums\TicketCategory;
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
+use App\Models\Ticket;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class StoreTicketRequest extends FormRequest
@@ -22,6 +22,7 @@ class StoreTicketRequest extends FormRequest
         return $project
             && ($this->user()?->can('create', [Ticket::class, $project]) ?? false);
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -35,7 +36,7 @@ class StoreTicketRequest extends FormRequest
             'due_date' => 'required|date|after_or_equal:today',
             'category' => ['required', Rule::enum(TicketCategory::class)],
             'priority' => ['required', Rule::enum(TicketPriority::class)],
-            'status'   => ['required', Rule::enum(TicketStatus::class)],
+            'status' => ['required', Rule::enum(TicketStatus::class)],
             'assignee_id' => [
                 'nullable',
                 Rule::exists('users', 'id')->where('role', 'user'),

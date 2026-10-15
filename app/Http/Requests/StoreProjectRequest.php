@@ -13,7 +13,7 @@ class StoreProjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-            return $this->user()?->can('create', Project::class) ?? false;
+        return $this->user()?->can('create', Project::class) ?? false;
 
     }
 
@@ -25,7 +25,7 @@ class StoreProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'name' => ['required', 'string', 'max:255'],
-    ];
+            'name' => ['required', 'string', 'max:255'],
+        ];
     }
 }

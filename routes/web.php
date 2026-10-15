@@ -6,9 +6,9 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use App\Models\Project;
 
 Route::redirect('/', '/projects')->middleware('auth');
 
@@ -20,18 +20,17 @@ Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-
 Route::middleware('auth')->group(function () {
     Route::get('/users/create', [UserController::class, 'create'])
-        ->middleware('can:create,' . User::class)
+        ->middleware('can:create,'.User::class)
         ->name('users.create');
 
     Route::post('/users', [UserController::class, 'store'])
         ->name('users.store');
 
     Route::resource('projects', ProjectController::class)
-        ->middlewareFor('index', 'can:viewAny,' . Project::class)
-        ->middlewareFor('create', 'can:create,' . Project::class)
+        ->middlewareFor('index', 'can:viewAny,'.Project::class)
+        ->middlewareFor('create', 'can:create,'.Project::class)
         ->middlewareFor('show', 'can:view,project')
         ->middlewareFor('edit', 'can:update,project')
         ->middlewareFor('destroy', 'can:delete,project');

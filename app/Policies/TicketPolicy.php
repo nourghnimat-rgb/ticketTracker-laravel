@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class TicketPolicy
 {
@@ -80,6 +79,7 @@ class TicketPolicy
     {
         return false;
     }
+
     public function updateStatus(User $user, Ticket $ticket): bool
     {
         if ($this->update($user, $ticket)) {

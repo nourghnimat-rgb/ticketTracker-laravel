@@ -5,8 +5,6 @@ namespace App\Models;
 use App\Enums\TicketCategory;
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
-use App\Http\Requests\StoreTicketRequest;
-use App\Services\TicketService;
 use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model

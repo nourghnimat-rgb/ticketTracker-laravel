@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Project;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -38,7 +39,15 @@ public function delete(Project $project): void
 }
 public function updateMembers(Project $project, array $members): void
 {
+    $removedIds = $project->users()
+        ->whereNotIn('users.id', $members)
+        ->pluck('users.id');
+
     $project->users()->sync($members);
+
+    Ticket::where('project_id', $project->id)
+        ->whereIn('assignee_id', $removedIds)
+        ->update(['assignee_id' => null]);
 }
 public function memberCandidates(): Collection
 {

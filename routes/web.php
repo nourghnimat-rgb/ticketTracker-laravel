@@ -22,15 +22,15 @@ Route::post('/logout', [LoginController::class, 'logout'])
 
 Route::middleware('auth')->group(function () {
     Route::get('/users/create', [UserController::class, 'create'])
-        ->middleware('can:create,' . User::class)
+        ->middleware('can:create,'.User::class)
         ->name('users.create');
 
     Route::post('/users', [UserController::class, 'store'])
         ->name('users.store');
 
     Route::resource('projects', ProjectController::class)
-        ->middlewareFor('index', 'can:viewAny,' . Project::class)
-        ->middlewareFor('create', 'can:create,' . Project::class)
+        ->middlewareFor('index', 'can:viewAny,'.Project::class)
+        ->middlewareFor('create', 'can:create,'.Project::class)
         ->middlewareFor('show', 'can:view,project')
         ->middlewareFor('edit', 'can:update,project')
         ->middlewareFor('destroy', 'can:delete,project');

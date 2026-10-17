@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Notification;
 class SendTicketNotification implements ShouldQueue
 {
     use Queueable;
+
     public bool $deleteWhenMissingModels = true;
+
     public int $tries = 3;
 
     public function __construct(

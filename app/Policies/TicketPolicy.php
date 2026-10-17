@@ -89,6 +89,7 @@ class TicketPolicy
             && $ticket->assignee_id === $user->id
             && $this->isMember($user, $ticket->project);
     }
+
     private function isMember(User $user, Project $project): bool
     {
         if ($project->relationLoaded('users')) {

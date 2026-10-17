@@ -21,7 +21,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return $user->role === UserRole::Admin|| $project->users()->whereKey($user->id)->exists();
+        return $user->role === UserRole::Admin || $project->users()->whereKey($user->id)->exists();
     }
 
     /**

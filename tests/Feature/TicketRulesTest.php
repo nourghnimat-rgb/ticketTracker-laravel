@@ -15,8 +15,11 @@ class TicketRulesTest extends TestCase
     use RefreshDatabase;
 
     private User $manager;
+
     private User $member;
+
     private User $outsider;
+
     private Project $project;
 
     protected function setUp(): void

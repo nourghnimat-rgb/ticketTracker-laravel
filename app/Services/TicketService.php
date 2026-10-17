@@ -91,7 +91,7 @@ class TicketService
 
         foreach ($overdue as $ticket) {
             $managerIds = $ticket->project->users
-                ->filter(fn($member) => $member->role === UserRole::Manager)
+                ->filter(fn ($member) => $member->role === UserRole::Manager)
                 ->pluck('id');
 
             $recipientIds = $managerIds

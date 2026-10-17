@@ -45,21 +45,21 @@ class CommentPolicy
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, Comment $comment): bool
-{
-    if ($user->role === UserRole::Admin) {
-        return true;
-    }
+    {
+        if ($user->role === UserRole::Admin) {
+            return true;
+        }
 
-    if (! $user->can('view', $comment->ticket)) {
-        return false;
-    }
+        if (! $user->can('view', $comment->ticket)) {
+            return false;
+        }
 
-    return match ($user->role) {
-        UserRole::Manager => $comment->ticket->created_by === $user->id,
-        UserRole::User => $comment->user_id === $user->id,
-        default => false,
-    };
-}
+        return match ($user->role) {
+            UserRole::Manager => $comment->ticket->created_by === $user->id,
+            UserRole::User => $comment->user_id === $user->id,
+            default => false,
+        };
+    }
 
     /**
      * Determine whether the user can restore the model.

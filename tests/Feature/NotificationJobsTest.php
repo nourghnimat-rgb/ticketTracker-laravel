@@ -61,7 +61,7 @@ class NotificationJobsTest extends TestCase
 
         Queue::assertPushed(
             SendTicketNotification::class,
-            fn($job) => $job->recipientIds === [$this->user->id]
+            fn ($job) => $job->recipientIds === [$this->user->id]
         );
     }
 
@@ -75,7 +75,7 @@ class NotificationJobsTest extends TestCase
 
         Queue::assertPushed(
             SendTicketNotification::class,
-            fn($job) => count($job->recipientIds) === 2
+            fn ($job) => count($job->recipientIds) === 2
                 && in_array($this->manager->id, $job->recipientIds)
                 && in_array($this->user->id, $job->recipientIds)
         );
@@ -95,7 +95,7 @@ class NotificationJobsTest extends TestCase
             ->assertSuccessful();
 
         Queue::assertPushed(SendTicketNotification::class, 1);
-        Queue::assertPushed(SendTicketNotification::class, fn($job) => $job->ticket->is($overdue)
+        Queue::assertPushed(SendTicketNotification::class, fn ($job) => $job->ticket->is($overdue)
             && in_array($this->user->id, $job->recipientIds)
             && in_array($this->manager->id, $job->recipientIds)
             && in_array($admin->id, $job->recipientIds));

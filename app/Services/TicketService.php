@@ -70,6 +70,12 @@ class TicketService
             ? Ticket::where('assignee_id', $user->id)
             : Ticket::where('created_by', $user->id);
 
+        if ($user->role !== UserRole::Admin) {
+            $query->whereHas('project.users', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            });
+        }
+
         return $query->with(['project', 'assignee'])->latest()->get();
     }
 

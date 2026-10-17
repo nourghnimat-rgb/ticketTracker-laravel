@@ -86,7 +86,7 @@
         <div class="card-body">
             <ul class="mb-0">
                 @forelse ($project->users as $member)
-                <li>{{ $member->name }} ({{ ucfirst($member->role) }})</li>
+                <li>{{ $member->name }} ({{ $member->role->label() }})</li>
                 @empty
                 <li class="text-muted">No members yet.</li>
                 @endforelse
@@ -106,7 +106,7 @@
                         id="member-{{ $user->id }}" value="{{ $user->id }}"
                         @checked($project->users->contains($user))>
                     <label class="form-check-label" for="member-{{ $user->id }}">
-                        {{ $user->name }} ({{ ucfirst($user->role) }})
+                        {{ $user->name }} ({{ $user->role->label() }})
                     </label>
                 </div>
                 @endforeach

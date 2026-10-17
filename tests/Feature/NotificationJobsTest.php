@@ -33,8 +33,11 @@ class NotificationJobsTest extends TestCase
     private function makeTicket(array $overrides = []): Ticket
     {
         return Ticket::create(array_merge([
-            'title' => 'T', 'description' => 'D', 'category' => 'bug',
-            'status' => 'open', 'priority' => 'low',
+            'title' => 'T',
+            'description' => 'D',
+            'category' => 'bug',
+            'status' => 'open',
+            'priority' => 'low',
             'due_date' => now()->addDay(),
             'project_id' => $this->project->id,
             'created_by' => $this->manager->id,
@@ -47,17 +50,22 @@ class NotificationJobsTest extends TestCase
         Queue::fake();
 
         $this->actingAs($this->manager)->post(route('tickets.store', $this->project), [
-            'title' => 'T', 'description' => 'D',
+            'title' => 'T',
+            'description' => 'D',
             'due_date' => now()->addDay()->toDateString(),
-            'category' => 'bug', 'priority' => 'low', 'status' => 'open',
+            'category' => 'bug',
+            'priority' => 'low',
+            'status' => 'open',
             'assignee_id' => $this->user->id,
         ]);
 
-        Queue::assertPushed(SendTicketNotification::class,
-            fn ($job) => $job->recipientIds === [$this->user->id]);
+        Queue::assertPushed(
+            SendTicketNotification::class,
+            fn($job) => $job->recipientIds === [$this->user->id]
+        );
     }
 
-    public function test_a_comment_notifies_the_creator_but_not_the_author(): void
+    public function test_a_comment_notifies_the_creator_and_assignee(): void
     {
         Queue::fake();
         $ticket = $this->makeTicket();
@@ -65,8 +73,12 @@ class NotificationJobsTest extends TestCase
         $this->actingAs($this->user)
             ->post(route('comments.store', $ticket), ['body' => 'hello']);
 
-        Queue::assertPushed(SendTicketNotification::class,
-            fn ($job) => $job->recipientIds === [$this->manager->id]);
+        Queue::assertPushed(
+            SendTicketNotification::class,
+            fn($job) => count($job->recipientIds) === 2
+                && in_array($this->manager->id, $job->recipientIds)
+                && in_array($this->user->id, $job->recipientIds)
+        );
     }
 
     public function test_overdue_command_notifies_assignee_managers_and_admins(): void
@@ -83,7 +95,7 @@ class NotificationJobsTest extends TestCase
             ->assertSuccessful();
 
         Queue::assertPushed(SendTicketNotification::class, 1);
-        Queue::assertPushed(SendTicketNotification::class, fn ($job) => $job->ticket->is($overdue)
+        Queue::assertPushed(SendTicketNotification::class, fn($job) => $job->ticket->is($overdue)
             && in_array($this->user->id, $job->recipientIds)
             && in_array($this->manager->id, $job->recipientIds)
             && in_array($admin->id, $job->recipientIds));

@@ -19,7 +19,6 @@ class CommentService
         $recipientIds = collect([$ticket->created_by, $ticket->assignee_id])
             ->filter()
             ->unique()
-            ->reject(fn ($id) => (int) $id === $author->id)
             ->values()
             ->all();
 

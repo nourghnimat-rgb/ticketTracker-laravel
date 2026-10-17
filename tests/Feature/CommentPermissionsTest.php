@@ -70,7 +70,7 @@ class CommentPermissionsTest extends TestCase
 
         Queue::assertPushed(SendTicketNotification::class, function ($job) {
             return in_array($this->manager->id, $job->recipientIds)
-                && ! in_array($this->user->id, $job->recipientIds);
+                && in_array($this->user->id, $job->recipientIds);
         });
     }
 

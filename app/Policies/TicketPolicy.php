@@ -91,6 +91,10 @@ class TicketPolicy
     }
     private function isMember(User $user, Project $project): bool
     {
+        if ($project->relationLoaded('users')) {
+            return $project->users->contains('id', $user->id);
+        }
+
         return $project->users()->whereKey($user->id)->exists();
     }
 }

@@ -63,6 +63,9 @@ class ProjectService
 
     public function loadDetails(Project $project): Project
     {
-        return $project->load(['users', 'tickets.assignee']);
+        $project->load(['users', 'tickets.assignee']);
+        $project->tickets->each->setRelation('project', $project);
+
+        return $project;
     }
 }

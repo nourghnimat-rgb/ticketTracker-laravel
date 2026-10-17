@@ -28,18 +28,8 @@
                 </thead>
                 <tbody>
                     @forelse ($project->tickets as $ticket)
-                    <tr>
-                        <td>
-                            <a href="{{ route('tickets.show', $ticket) }}" class="text-decoration-none">
-                                {{ $ticket->title }}
-                            </a>
-                        </td>
-                        <td>{{ $ticket->category->label() }}</td>
-                        <td><x-status-badge :status="$ticket->status" /></td>
-                        <td>{{ $ticket->priority->label() }}</td>
-                        <td>{{ $ticket->assignee?->name ?? 'Unassigned' }}</td>
-                        <td>{{ $ticket->due_date->format('Y-m-d') }}</td>
-                        <td>
+                    <x-ticket-row :ticket="$ticket">
+                        <x-slot:actions>
                             @can('update', $ticket)
                             <div class="d-flex gap-2">
                                 <a href="{{ route('tickets.edit', $ticket) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
@@ -54,22 +44,10 @@
                                 @endcan
                             </div>
                             @elsecan('updateStatus', $ticket)
-                            <form method="POST" action="{{ route('tickets.status.update', $ticket) }}"
-                                class="d-flex gap-2">
-                                @csrf
-                                @method('PATCH')
-                                <select name="status" class="form-select form-select-sm">
-                                    @foreach (\App\Enums\TicketStatus::cases() as $status)
-                                    <option value="{{ $status->value }}" @selected($ticket->status === $status)>
-                                        {{ $status->label() }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
-                            </form>
+                            <x-status-form :ticket="$ticket" />
                             @endcan
-                        </td>
-                    </tr>
+                        </x-slot:actions>
+                    </x-ticket-row>
                     @empty
                     <tr>
                         <td colspan="7" class="text-muted">No tickets yet.</td>

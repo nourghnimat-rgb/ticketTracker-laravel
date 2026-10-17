@@ -21,20 +21,7 @@
             </div>
             <div class="mb-3"><strong>Due:</strong> {{ $ticket->due_date->format('Y-m-d') }}</div>
             @can('updateStatus', $ticket)
-            <form method="POST" action="{{ route('tickets.status.update', $ticket) }}"
-                class="d-flex gap-2 mb-3" style="max-width: 320px;">
-                @csrf
-                @method('PATCH')
-                <select name="status" class="form-select form-select-sm">
-                    @foreach (\App\Enums\TicketStatus::cases() as $status)
-                    <option value="{{ $status->value }}" @selected($ticket->status === $status)>
-                        {{ $status->label() }}
-                    </option>
-                    @endforeach
-                </select>
-                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
-            </form>
-            @endcan
+            <x-status-form :ticket="$ticket" class="mb-3" style="max-width: 320px;" />
             <hr>
             <p class="mb-0">{{ $ticket->description }}</p>
         </div>

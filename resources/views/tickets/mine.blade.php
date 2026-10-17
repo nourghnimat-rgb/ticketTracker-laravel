@@ -17,25 +17,7 @@
                 </thead>
                 <tbody>
                     @forelse ($tickets as $ticket)
-                        <tr>
-                            <td>
-                                <a href="{{ route('tickets.show', $ticket) }}" class="text-decoration-none">
-                                    {{ $ticket->title }}
-                                </a>
-                            </td>
-                            <td>
-                                <a href="{{ route('projects.show', $ticket->project) }}" class="text-decoration-none">
-                                    {{ $ticket->project->name }}
-                                </a>
-                            </td>
-                            <td>{{ $ticket->category->label() }}</td>
-                            <td><x-status-badge :status="$ticket->status" /></td>
-                            <td>{{ $ticket->priority->label() }}</td>
-                            <td>{{ $ticket->assignee?->name ?? 'Unassigned' }}</td>
-                            <td>{{ $ticket->due_date->format('Y-m-d') }}</td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="7" class="text-muted">No tickets.</td></tr>
+                        <x-ticket-row :ticket="$ticket" :show-project="true" />
                     @endforelse
                 </tbody>
             </table>

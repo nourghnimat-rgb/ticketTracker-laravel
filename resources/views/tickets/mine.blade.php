@@ -17,7 +17,11 @@
                 </thead>
                 <tbody>
                     @forelse ($tickets as $ticket)
-                        <x-ticket-row :ticket="$ticket" :show-project="true" />
+                    <x-ticket-row :ticket="$ticket" :show-project="true" />
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center">No tickets found.</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>

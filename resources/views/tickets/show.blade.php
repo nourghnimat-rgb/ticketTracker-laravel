@@ -22,6 +22,8 @@
             <div class="mb-3"><strong>Due:</strong> {{ $ticket->due_date->format('Y-m-d') }}</div>
             @can('updateStatus', $ticket)
             <x-status-form :ticket="$ticket" class="mb-3" style="max-width: 320px;" />
+            @endcan
+
             <hr>
             <p class="mb-0">{{ $ticket->description }}</p>
         </div>
